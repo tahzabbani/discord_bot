@@ -13,8 +13,6 @@ from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
 
-TOKEN = 'NzAyMjk0ODY0NDA2MjQ5NTYy.Xp9-WA.ltPhKYfriMC0i5mzgQigu9ib1t4'
-
 @client.command()
 async def getinfo(ctx, summoner_name):
     channel = ctx.channel
