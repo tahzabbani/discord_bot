@@ -4,6 +4,7 @@ import math
 import random
 import os
 from bs4 import BeautifulSoup
+from random import randint
 from discord.ext import commands
 from discord import User
 from asyncio import sleep
@@ -12,6 +13,21 @@ from urllib.request import urlopen
 from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
+
+async def getCorrectLane(lane):
+    if lane == 'mid' or lane == 'middle':
+        lane = 'MID'
+    elif lane == 'top':
+        lane = 'TOP'
+    elif lane == 'bot' or lane =='bottom' or lane == 'adc':
+        lane = 'ADC'
+    elif lane == 'sup' or lane == 'supp' or lane == 'support':
+        lane = 'SUPPORT'
+    elif lane == 'jg' or lane == 'jungle':
+        lane = 'JUNGLE'
+    else:
+        return 'try again but without weirdly typing it'
+
 
 @client.command()
 async def getinfo(ctx, summoner_name):
@@ -52,20 +68,6 @@ async def getinfo(ctx, summoner_name):
     await channel.send(rank + "\n" + "------------" + "\n")
     await channel.send('\n'.join(finishedArray))
 
-async def getCorrectLane(lane):
-    if lane == 'mid' or lane == 'middle':
-        lane = 'MID'
-    elif lane == 'top':
-        lane = 'TOP'
-    elif lane == 'bot' or lane =='bottom' or lane == 'adc':
-        lane = 'ADC'
-    elif lane == 'sup' or lane == 'supp' or lane == 'support':
-        lane = 'SUPPORT'
-    elif lane == 'jg' or lane == 'jungle':
-        lane = 'JUNGLE'
-    else:
-        return 'try again but without weirdly typing it'
-
 @client.command()
 async def tier(ctx, lane):
     channel = ctx.channel
@@ -73,19 +75,7 @@ async def tier(ctx, lane):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'lxml')
 
-    if lane == 'mid' or lane == 'middle':
-        lane = 'MID'
-    elif lane == 'top':
-        lane = 'TOP'
-    elif lane == 'bot' or lane =='bottom' or lane == 'adc':
-        lane = 'ADC'
-    elif lane == 'sup' or lane == 'supp' or lane == 'support':
-        lane = 'SUPPORT'
-    elif lane == 'jg' or lane == 'jungle':
-        lane = 'JUNGLE'
-    else:
-        await channel.send('try again but without weirdly typing it')
-        return
+    getCorrectLane(lane)
     
     champArray = []
     pickRateArray = []
@@ -163,7 +153,6 @@ async def runes(ctx, champ, lane):
                 winRate = x.find('span', class_='win-ratio__text')
                 wr_value = winRate.find_next('strong').get_text()
                 statArray.append('Pick Rate: ' + pr_value + '\tWin Rate: ' + wr_value)
-    print(statArray)
 
     for i in splitTrees:
         keystoneWrapper = i.find_all('div', class_='perk-page__item perk-page__item--keystone perk-page__item--active')
