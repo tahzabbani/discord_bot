@@ -14,19 +14,19 @@ from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
 
-async def getCorrectLane(lane):
+def getCorrectLane(lane):
     if lane == 'mid' or lane == 'middle':
-        lane = 'MID'
+        return 'MID'
     elif lane == 'top':
-        lane = 'TOP'
+        return 'TOP'
     elif lane == 'bot' or lane =='bottom' or lane == 'adc':
-        lane = 'ADC'
+        return 'ADC'
     elif lane == 'sup' or lane == 'supp' or lane == 'support':
-        lane = 'SUPPORT'
+        return 'SUPPORT'
     elif lane == 'jg' or lane == 'jungle':
-        lane = 'JUNGLE'
+        return 'JUNGLE'
     else:
-        return 'try again but without weirdly typing it'
+        return False
 
 
 @client.command()
@@ -75,7 +75,10 @@ async def tier(ctx, lane):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'lxml')
 
-    getCorrectLane(lane)
+    if getCorrectLane(lane) != False:
+        lane = getCorrectLane(lane)
+    else: 
+        await channel.send("try again but don't type it weirdly")
     
     champArray = []
     pickRateArray = []
@@ -87,6 +90,7 @@ async def tier(ctx, lane):
     
     for x in wrapper:
         numWrapper = x.find_all('td', 'champion-index-table__cell champion-index-table__cell--rank')
+        print(numWrapper)
         for i in numWrapper:
             champNum = i.get_text()
             numArray.append(champNum)
@@ -115,7 +119,7 @@ async def tier(ctx, lane):
         top.add_row([numArray[i], champArray[i], winRateArray[i], pickRateArray[i]])
         count+=1
 
-    await channel.send('```' + str(top) + '```')
+    await channel.send('```' + str(top) + '```')            # submit as code block because of spacing restrictions
 
     while count < len(champArray):
         bottomHalf.add_row([numArray[count], champArray[count], winRateArray[count], pickRateArray[count]])
@@ -130,7 +134,11 @@ async def runes(ctx, champ, lane):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'lxml')
 
-    getCorrectLane(lane)
+    if getCorrectLane(lane) != False:
+        lane = getCorrectLane(lane)
+    else: 
+        await channel.send("try again but don't type it weirdly")
+    
     fullTrees = ''
     tree = []
     count = 1
