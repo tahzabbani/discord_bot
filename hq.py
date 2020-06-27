@@ -13,6 +13,7 @@ from urllib.request import urlopen
 from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
+client.remove_command("help")                   # for the initial help command it provides
 
 def getCorrectLane(lane):
     if lane == 'mid' or lane == 'middle':
@@ -199,9 +200,11 @@ async def spam(ctx, user: User):
 @client.command()
 async def ball(ctx, question):
     responses = ['You should ask Tahseen',
-                'Yeah sure, just don\'t hurt yourself',
-                'Please no',
-                'yea ok',
+                'You can count on it',
+                'oh god no',
+                'yea',
+                'that\'s a dumb question',
+                'Try again later',
                 'My guts say no',
                 'lol you\'re on your own bud',
                 'YEAH DEFINITELY',
@@ -212,6 +215,15 @@ async def ball(ctx, question):
                 'Hard no from me']
     random_response_index = randint(0, len(responses) - 1)
     await ctx.channel.send(responses[random_response_index])
+
+@client.command()
+async def help(ctx):
+    await ctx.channel.send('```getinfo - usage: ?getinfo <summoner_name> - (make sure to use underscores) it retrieves some info on that summoner \n' \
+                           'tier - usage: ?tier <lane> - retrieves tier list for that lane \n' \
+                           'runes - usage: ?runes <champion> <lane> - retrieves rune for that role and champ \n' \
+                           'spam - usage: ?spam <user> - spams a user in the discord \n' \
+                           'flip - usage: ?flip - flips a coin \n' \
+                           'ball - usage: ?ball <question> - asks the 8ball```')
 
 @client.event
 async def on_ready():
