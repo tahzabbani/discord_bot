@@ -39,6 +39,7 @@ async def getinfo(ctx, summoner_name):
     KDAArray = []
     namesArray = []
     gameTypeArray = []
+    gameResultArray = []
     finishedArray = []
 
     div = soup.find_all('div', class_='GameItemList')
@@ -59,14 +60,18 @@ async def getinfo(ctx, summoner_name):
             namesArray.append(name)
         gameStats = elem.find_all('div', class_='GameStats')
         for x in gameStats:
-            gameType = x.find('div', class_='GameType').get_text().replace("\t", "").replace("\n", "")    # replace for the weird formatting gotten from op.gg                                                
+            gameType = x.find('div', class_='GameType').get_text().replace("\t", "").replace("\n", "")    # replace for the weird formatting gotten from op.gg        
+            gameResult = x.find('div', class_='GameResult').get_text().replace("\t", "").replace("\n", "")                                         
             gameTypeArray.append(gameType)
+            gameResultArray.append(gameResult)
+
+    table = PrettyTable(['Result', 'Champion', 'KDA', 'Game Type'])
 
     for i in range(10):
-        finishedArray.append(namesArray[i] + " " + KDAArray[i] + " --- " + gameTypeArray[i])
+        table.add_row([gameResultArray[i], namesArray[i], KDAArray[i], gameTypeArray[i]])
     
     await channel.send(rank + "\n" + "------------" + "\n")
-    await channel.send('\n'.join(finishedArray))
+    await channel.send("```" + str(table) + "```")
 
 @client.command()
 async def tier(ctx, lane):
@@ -90,7 +95,6 @@ async def tier(ctx, lane):
     
     for x in wrapper:
         numWrapper = x.find_all('td', 'champion-index-table__cell champion-index-table__cell--rank')
-        print(numWrapper)
         for i in numWrapper:
             champNum = i.get_text()
             numArray.append(champNum)
@@ -192,6 +196,22 @@ async def spam(ctx, user: User):
         await ctx.send(user.mention)
         await sleep(1)
 
+@client.command()
+async def ball(ctx, question):
+    responses = ['You should ask Tahseen',
+                'Yeah sure, just don\'t hurt yourself',
+                'Please no',
+                'yea ok',
+                'My guts say no',
+                'lol you\'re on your own bud',
+                'YEAH DEFINITELY',
+                'WHY WOULD YOU EVEN ASK THIS?',
+                'Maybe you should ask again; I couldn\'t hear you over the sound of Rikesh',
+                'no',
+                'ya',
+                'Hard no from me']
+    random_response_index = randint(0, len(responses) - 1)
+    await ctx.channel.send(responses[random_response_index])
 
 @client.event
 async def on_ready():
