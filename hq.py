@@ -3,6 +3,7 @@ import requests
 import math
 import random
 import os
+import dict_scrape
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands
@@ -180,7 +181,7 @@ async def runes(ctx, champ, lane):
         tree.clear()
         count += 1
     
-    await channel.send(fullTrees)
+    await channel.send('```' + fullTrees + '```')
 
 @client.command()
 async def flip(ctx):
@@ -212,9 +213,36 @@ async def ball(ctx, question):
                 'Maybe you should ask again; I couldn\'t hear you over the sound of Rikesh',
                 'no',
                 'ya',
-                'Hard no from me']
-    random_response_index = randint(0, len(responses) - 1)
-    await ctx.channel.send(responses[random_response_index])
+                'Hard no from me',
+                'you wish',
+                'you\'re not only wrong, you\'re stupid',
+                'HELL YEAH BROTHER',
+                'not quite',
+                'obviously not']
+    rikesh_responses = ['how are you this dumb?',
+                        'please just shut up',
+                        'ur mom',
+                        'i don\'t like your tone']
+    if (ctx.message.author == "RikeshPatel"):
+        random_response_index = randint(0, len(rikesh_responses) - 1)
+        await ctx.channel.send(responses[random_response_index])
+    else:
+        random_response_index = randint(0, len(responses) - 1)
+        await ctx.channel.send(responses[random_response_index])
+
+
+@client.command()
+async def random_username(ctx, member: discord.Member):
+    username = dict_scrape.get_word()
+    await member.edit(nick=username)
+    await ctx.channel.send('Nickname was changed to ' + username)
+    if " " in username:
+        space_index = username.index(" ")
+        temp = list(string)
+        temp[space_index] = "%20"
+        string = "".join(temp)
+    await ctx.channel.send(dict_scrape.get_definition(username))
+
 
 @client.command()
 async def help(ctx):
