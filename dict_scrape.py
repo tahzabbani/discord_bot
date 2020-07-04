@@ -15,8 +15,14 @@ def get_definition(word):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'html.parser')
     definition_wrapper = soup.find_all('div', class_="guts active")
-    definition = ''
+    definition = []
+    count = 1
+    if soup.find_all("p", class_="weak"):
+        return 'no definition found'
     for x in definition_wrapper:
-        definition = x.find('li').get_text()
-    return definition
-        
+        definitions = x.find_all('ul')
+        for i in definitions:
+            singular_def = i.find('li').get_text()
+            definition.append(str(count) + ". " + singular_def)
+            count += 1
+    return "\n".join(definition)

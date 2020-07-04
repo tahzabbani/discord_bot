@@ -4,6 +4,7 @@ import math
 import random
 import os
 import dict_scrape
+import urban_dic
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands
@@ -225,24 +226,44 @@ async def ball(ctx, question):
                         'i don\'t like your tone']
     if (ctx.message.author == "RikeshPatel"):
         random_response_index = randint(0, len(rikesh_responses) - 1)
-        await ctx.channel.send(responses[random_response_index])
+        await ctx.channel.send(rikesh_responses[random_response_index])
     else:
         random_response_index = randint(0, len(responses) - 1)
         await ctx.channel.send(responses[random_response_index])
 
 
 @client.command()
-async def random_username(ctx, member: discord.Member):
+async def rand_usr(ctx, member: discord.Member):
     username = dict_scrape.get_word()
     await member.edit(nick=username)
     await ctx.channel.send('Nickname was changed to ' + username)
     if " " in username:
         space_index = username.index(" ")
-        temp = list(string)
+        temp = list(username)
         temp[space_index] = "%20"
-        string = "".join(temp)
-    await ctx.channel.send(dict_scrape.get_definition(username))
+        username = "".join(temp)
+    await ctx.channel.send("```" + dict_scrape.get_definition(username) + "```")
 
+@client.command()
+async def get_def(ctx, word):
+    if " " in word:
+        space_index = word.index(" ")
+        temp = list(word)
+        temp[space_index] = "%20"
+        word = "".join(temp)
+    await ctx.channel.send(dict_scrape.get_definition(word))
+
+@client.command()
+async def rand_urban_def(ctx):
+    await ctx.channel.send(urban_dic.get_rand_urban())
+
+@client.command()
+async def urb_usr(ctx, member: discord.Member):
+    definition = urban_dic.get_rand_urban()
+    username = definition.split("\n")[0]
+    await member.edit(nick=username)
+    await ctx.channel.send('Nickname was changed to ' + username)
+    await ctx.channel.send(definition)
 
 @client.command()
 async def help(ctx):
@@ -251,7 +272,11 @@ async def help(ctx):
                            'runes - usage: ?runes <champion> <lane> - retrieves rune for that role and champ \n' \
                            'spam - usage: ?spam <user> - spams a user in the discord \n' \
                            'flip - usage: ?flip - flips a coin \n' \
-                           'ball - usage: ?ball <question> - asks the 8ball```')
+                           'ball - usage: ?ball <question> - asks the 8ball \n' \
+                           'rand_usr - usage: ?rand_usr <user> - it will change their nickname to a random word \n' \
+                           'get_def - usage: ?get_def <word> - it will return a definition from wordnik.com \n' \
+                           'rand_urban_def - usage: ?rand_urban_def - grab a random definition from urban dictionary \n' \
+                           'urb_usr - usage: ?urb_usr <user> - change a nickname to a random urban dictionary word and then will display the definition```')
 
 @client.event
 async def on_ready():
