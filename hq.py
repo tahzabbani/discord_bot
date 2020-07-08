@@ -5,6 +5,7 @@ import random
 import os
 import dict_scrape
 import urban_dic
+import luke_methods
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands
@@ -31,6 +32,21 @@ def getCorrectLane(lane):
     else:
         return False
 
+@client.command()
+async def build(ctx, champion, lane):
+    if getCorrectLane(lane) != False:
+        lane = getCorrectLane(lane)
+    else: 
+        await ctx.channel.send("try again but don't type it weirdly")
+    await ctx.channel.send("```" + luke_methods.get_build(champion, lane) + "```")
+
+@client.command()
+async def skills(ctx, champion, lane):
+    if getCorrectLane(lane) != False:
+        lane = getCorrectLane(lane)
+    else: 
+        await ctx.channel.send("try again but don't type it weirdly")
+    await ctx.channel.send("```" + luke_methods.get_skills(champion, lane) + "```")
 
 @client.command()
 async def getinfo(ctx, summoner_name):
@@ -267,16 +283,18 @@ async def urb_usr(ctx, member: discord.Member):
 
 @client.command()
 async def help(ctx):
-    await ctx.channel.send('```getinfo - usage: ?getinfo <summoner_name> - (make sure to use underscores) it retrieves some info on that summoner \n' \
-                           'tier - usage: ?tier <lane> - retrieves tier list for that lane \n' \
-                           'runes - usage: ?runes <champion> <lane> - retrieves rune for that role and champ \n' \
-                           'spam - usage: ?spam <user> - spams a user in the discord \n' \
-                           'flip - usage: ?flip - flips a coin \n' \
-                           'ball - usage: ?ball <question> - asks the 8ball \n' \
-                           'rand_usr - usage: ?rand_usr <user> - it will change their nickname to a random word \n' \
-                           'get_def - usage: ?get_def <word> - it will return a definition from wordnik.com \n' \
-                           'rand_urban_def - usage: ?rand_urban_def - grab a random definition from urban dictionary \n' \
-                           'urb_usr - usage: ?urb_usr <user> - change a nickname to a random urban dictionary word and then will display the definition```')
+    await ctx.channel.send('getinfo - usage: `?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
+                           'tier - usage: `?tier <lane>` - retrieves tier list for that lane \n' \
+                           'runes - usage: `?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
+                           'spam - usage: `?spam <user>` - spams a user in the discord \n' \
+                           'flip - usage: `?flip` - flips a coin \n' \
+                           'ball - usage: `?ball <question>` - asks the 8ball \n' \
+                           'rand_usr - usage: `?rand_usr <user>` - it will change their nickname to a random word \n' \
+                           'get_def - usage: `?get_def <word>` - it will return a definition from wordnik.com \n' \
+                           'rand_urban_def - usage: `?rand_urban_def` - grab a random definition from urban dictionary \n' \
+                           'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n' \
+                           'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
+                           'skills - usage: `?skills <champion> <lane>` retrieve the skill max order for a champion')
 
 @client.event
 async def on_ready():
