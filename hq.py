@@ -6,6 +6,7 @@ import os
 import dict_scrape
 import urban_dic
 import luke_methods
+import lol_scrape
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands
@@ -16,7 +17,8 @@ from urllib.request import urlopen
 from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
-client.remove_command("help")                   # for the initial help command it provides
+# for the initial help command it provides
+client.remove_command("help")                   
 
 def getCorrectLane(lane):
     if lane == 'mid' or lane == 'middle':
@@ -67,7 +69,8 @@ async def getinfo(ctx, summoner_name):
     for elem in div:
         wrappers = elem.find_all('div', class_='KDA')
         for x in wrappers:
-            innerKDA = x.find_all('div', class_="KDA")      # this is from op.gg's html that puts a KDA inside KDA to prevent duplication
+            # this is from op.gg's html that puts a KDA inside KDA to prevent duplication
+            innerKDA = x.find_all('div', class_="KDA")      
             for i in innerKDA:
                 kill = i.find('span', class_="Kill").get_text()
                 death = i.find('span', class_="Death").get_text()
@@ -79,7 +82,8 @@ async def getinfo(ctx, summoner_name):
             namesArray.append(name)
         gameStats = elem.find_all('div', class_='GameStats')
         for x in gameStats:
-            gameType = x.find('div', class_='GameType').get_text().replace("\t", "").replace("\n", "")    # replace for the weird formatting gotten from op.gg        
+             # replace for the weird formatting gotten from op.gg   
+            gameType = x.find('div', class_='GameType').get_text().replace("\t", "").replace("\n", "")        
             gameResult = x.find('div', class_='GameResult').get_text().replace("\t", "").replace("\n", "")                                         
             gameTypeArray.append(gameType)
             gameResultArray.append(gameResult)
@@ -137,12 +141,14 @@ async def tier(ctx, lane):
     bottomHalf = PrettyTable(['Number','Champion', 'Win Rate', 'Pick Rate'])
 
     roundDownLength = math.floor(len(champArray)/2)
-    count = 0                                               # this stuff has to happen because 2000 limit per message in discord
+    count = 0                             
+    # this stuff has to happen because 2000 limit per message in discord                  
     for i in range(roundDownLength):
         top.add_row([numArray[i], champArray[i], winRateArray[i], pickRateArray[i]])
         count+=1
 
-    await channel.send('```' + str(top) + '```')            # submit as code block because of spacing restrictions
+    # submit as code block because of spacing restrictions
+    await channel.send('```' + str(top) + '```')            
 
     while count < len(champArray):
         bottomHalf.add_row([numArray[count], champArray[count], winRateArray[count], pickRateArray[count]])
@@ -201,6 +207,13 @@ async def runes(ctx, champ, lane):
     await channel.send('```' + fullTrees + '```')
 
 @client.command()
+async def get_counters(ctx, champion):
+    await ctx.channel.send("```" + lol_scrape.best_pick(champion) + "```") 
+    await ctx.channel.send("```" + lol_scrape.worst_picks(champion) + "```") 
+    await ctx.channel.send("```" + lol_scrape.best_lane_picks(champion) + "```")
+    
+
+@client.command()
 async def flip(ctx):
     channel = ctx.channel
     random_num = randint(0,1)
@@ -253,6 +266,7 @@ async def rand_usr(ctx, member: discord.Member):
     username = dict_scrape.get_word()
     await member.edit(nick=username)
     await ctx.channel.send('Nickname was changed to ' + username)
+    # replace spaces in URL with the appropriate characters
     if " " in username:
         space_index = username.index(" ")
         temp = list(username)
