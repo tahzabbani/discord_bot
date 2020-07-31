@@ -6,7 +6,7 @@ import os
 import dict_scrape
 import urban_dic
 import luke_methods
-import lol_scrape
+import counters
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands
@@ -208,9 +208,9 @@ async def runes(ctx, champ, lane):
 
 @client.command()
 async def get_counters(ctx, champion):
-    await ctx.channel.send("```" + lol_scrape.best_pick(champion) + "```") 
-    await ctx.channel.send("```" + lol_scrape.worst_picks(champion) + "```") 
-    await ctx.channel.send("```" + lol_scrape.best_lane_picks(champion) + "```")
+    await ctx.channel.send("```" + counters.best_pick(champion) + "```") 
+    await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
+    await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
     
 
 @client.command()
@@ -308,7 +308,8 @@ async def help(ctx):
                            'rand_urban_def - usage: `?rand_urban_def` - grab a random definition from urban dictionary \n' \
                            'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n' \
                            'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
-                           'skills - usage: `?skills <champion> <lane>` retrieve the skill max order for a champion')
+                           'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
+                           'get_counters - usage: ?get_counters <champion> - get the best picks, worst picks, and best lane picks for a champion')
 
 @client.event
 async def on_ready():
