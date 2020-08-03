@@ -9,7 +9,7 @@ import luke_methods
 import counters
 from bs4 import BeautifulSoup
 from random import randint
-from discord.ext import commands
+from discord.ext import commands, tasks
 from discord import User
 from asyncio import sleep
 from urllib import request, response, error, parse
@@ -212,6 +212,7 @@ async def get_counters(ctx, champion):
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
     
+# non league commands below
 
 @client.command()
 async def flip(ctx):
@@ -252,8 +253,10 @@ async def ball(ctx, question):
     rikesh_responses = ['how are you this dumb?',
                         'please just shut up',
                         'ur mom',
-                        'i don\'t like your tone']
-    if (ctx.message.author == "RikeshPatel"):
+                        'i don\'t like your tone',
+                        'PLEASE PLEASE PLEASE shut up',
+                        "leave the server"]
+    if (ctx.message.author.name == "RikeshPatel"):
         random_response_index = randint(0, len(rikesh_responses) - 1)
         await ctx.channel.send(rikesh_responses[random_response_index])
     else:
@@ -297,23 +300,38 @@ async def urb_usr(ctx, member: discord.Member):
 
 @client.command()
 async def help(ctx):
-    await ctx.channel.send('getinfo - usage: `?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
+    await ctx.channel.send('**LEAGUE RELATED** \n' \
+                           'getinfo - usage: `?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
                            'tier - usage: `?tier <lane>` - retrieves tier list for that lane \n' \
                            'runes - usage: `?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
-                           'spam - usage: `?spam <user>` - spams a user in the discord \n' \
-                           'flip - usage: `?flip` - flips a coin \n' \
-                           'ball - usage: `?ball <question>` - asks the 8ball \n' \
+                            'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
+                           'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
+                           'get_counters - usage: `?get_counters <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
+                           '**DEFINITIONS** \n' \
                            'rand_usr - usage: `?rand_usr <user>` - it will change their nickname to a random word \n' \
                            'get_def - usage: `?get_def <word>` - it will return a definition from wordnik.com \n' \
                            'rand_urban_def - usage: `?rand_urban_def` - grab a random definition from urban dictionary \n' \
-                           'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n' \
-                           'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
-                           'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           'get_counters - usage: ?get_counters <champion> - get the best picks, worst picks, and best lane picks for a champion')
+                           'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n\n' \
+                           '**MISC** \n' \
+                           'spam - usage: `?spam <user>` - spams a user in the discord \n' \
+                           'flip - usage: `?flip` - flips a coin \n' \
+                           'ball - usage: `?ball <question>` - asks the 8ball')
 
 @client.event
 async def on_ready():
     print('bot is online')
 
+@tasks.loop(hours=24)
+async def scheduled():
+    message_channel = client.get_channel(412851300255006730)
+    print(f"Got channel {message_channel}")
+    await message_channel.send("POSTURE CHECK")
+
+@scheduled.before_loop
+async def before():
+    await client.wait_until_ready()
+    print("Finished waiting")
+
+scheduled.start()
 
 client.run(os.environ.get('MY_TOKEN'))
