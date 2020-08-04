@@ -321,7 +321,7 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
-@tasks.loop(hours=24)
+@tasks.loop(hours=5)
 async def scheduled():
     message_channel = client.get_channel(412851300255006730)
     print(f"Got channel {message_channel}")
