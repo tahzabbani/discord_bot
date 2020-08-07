@@ -7,6 +7,7 @@ import dict_scrape
 import urban_dic
 import luke_methods
 import counters
+import league
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands, tasks
@@ -20,32 +21,20 @@ client = commands.Bot(command_prefix='?')
 # for the initial help command it provides
 client.remove_command("help")                   
 
-def getCorrectLane(lane):
-    if lane == 'mid' or lane == 'middle':
-        return 'MID'
-    elif lane == 'top':
-        return 'TOP'
-    elif lane == 'bot' or lane =='bottom' or lane == 'adc':
-        return 'ADC'
-    elif lane == 'sup' or lane == 'supp' or lane == 'support':
-        return 'SUPPORT'
-    elif lane == 'jg' or lane == 'jungle':
-        return 'JUNGLE'
-    else:
-        return False
+hq_channel = 412851300255006730
 
 @client.command()
 async def build(ctx, champion, lane):
-    if getCorrectLane(lane) != False:
-        lane = getCorrectLane(lane)
+    if league.getCorrectLane(lane) != False:
+        lane = league.getCorrectLane(lane)
     else: 
         await ctx.channel.send("try again but don't type it weirdly")
     await ctx.channel.send("```" + luke_methods.get_build(champion, lane) + "```")
 
 @client.command()
 async def skills(ctx, champion, lane):
-    if getCorrectLane(lane) != False:
-        lane = getCorrectLane(lane)
+    if league.getCorrectLane(lane) != False:
+        lane = league.getCorrectLane(lane)
     else: 
         await ctx.channel.send("try again but don't type it weirdly")
     await ctx.channel.send("```" + luke_methods.get_skills(champion, lane) + "```")
@@ -53,58 +42,18 @@ async def skills(ctx, champion, lane):
 @client.command()
 async def getinfo(ctx, summoner_name):
     channel = ctx.channel
-    URL = "https://na.op.gg/summoner/userName=" + summoner_name
-    html = urlopen(URL)
-    soup = BeautifulSoup(html, 'html.parser')
+    await channel.send(league.getinfo(summoner_name))
 
-    KDAArray = []
-    namesArray = []
-    gameTypeArray = []
-    gameResultArray = []
-    finishedArray = []
-
-    div = soup.find_all('div', class_='GameItemList')
-    rank = soup.find('div', class_='TierRank').get_text()
-
-    for elem in div:
-        wrappers = elem.find_all('div', class_='KDA')
-        for x in wrappers:
-            # this is from op.gg's html that puts a KDA inside KDA to prevent duplication
-            innerKDA = x.find_all('div', class_="KDA")      
-            for i in innerKDA:
-                kill = i.find('span', class_="Kill").get_text()
-                death = i.find('span', class_="Death").get_text()
-                assist = i.find('span', class_="Assist").get_text()
-                KDAArray.append(kill + "/" + death + "/" + assist)
-        names = elem.find_all('div', class_='ChampionName')
-        for x in names:
-            name = x.find('a').get_text()
-            namesArray.append(name)
-        gameStats = elem.find_all('div', class_='GameStats')
-        for x in gameStats:
-             # replace for the weird formatting gotten from op.gg   
-            gameType = x.find('div', class_='GameType').get_text().replace("\t", "").replace("\n", "")        
-            gameResult = x.find('div', class_='GameResult').get_text().replace("\t", "").replace("\n", "")                                         
-            gameTypeArray.append(gameType)
-            gameResultArray.append(gameResult)
-
-    table = PrettyTable(['Result', 'Champion', 'KDA', 'Game Type'])
-
-    for i in range(10):
-        table.add_row([gameResultArray[i], namesArray[i], KDAArray[i], gameTypeArray[i]])
-    
-    await channel.send(rank + "\n" + "------------" + "\n")
-    await channel.send("```" + str(table) + "```")
-
+#  this command cannot be sent to the league.py because of how I set it up with discord's character limit because I am dumb
 @client.command()
 async def tier(ctx, lane):
     channel = ctx.channel
     URL = "https://na.op.gg/champion/statistics"
     html = urlopen(URL)
-    soup = BeautifulSoup(html, 'lxml')
+    soup = BeautifulSoup(html, 'html.parser')
 
-    if getCorrectLane(lane) != False:
-        lane = getCorrectLane(lane)
+    if league.getCorrectLane(lane) != False:
+        lane = league.getCorrectLane(lane)
     else: 
         await channel.send("try again but don't type it weirdly")
     
@@ -159,55 +108,10 @@ async def tier(ctx, lane):
 @client.command()
 async def runes(ctx, champ, lane):
     channel = ctx.channel
-    URL = "https://na.op.gg/champion/" + champ + "/statistics/" + lane
-    html = urlopen(URL)
-    soup = BeautifulSoup(html, 'lxml')
-
-    if getCorrectLane(lane) != False:
-        lane = getCorrectLane(lane)
-    else: 
-        await channel.send("try again but don't type it weirdly")
-    
-    fullTrees = ''
-    tree = []
-    count = 1
-    statArray = []
-
-    splitTrees = soup.find_all('div', class_='perk-page-wrap')
-    stats1 = soup.find_all('tbody', class_='tabItem ChampionKeystoneRune-1')
-    stats2 = soup.find_all('tbody', class_='tabItem ChampionKeystoneRune-2')
-    stats = [stats1, stats2]
-
-    winRate = ''
-    pickRate = ''
-
-    for j in stats:
-        for i in j:
-            separateStats = i.find_all('td', class_='champion-overview__stats champion-overview__stats--pick')
-            for x in separateStats:
-                pickRate = x.find('span', class_='pick-ratio__text')
-                pr_value = pickRate.find_next('strong').get_text()
-                winRate = x.find('span', class_='win-ratio__text')
-                wr_value = winRate.find_next('strong').get_text()
-                statArray.append('Pick Rate: ' + pr_value + '\tWin Rate: ' + wr_value)
-
-    for i in splitTrees:
-        keystoneWrapper = i.find_all('div', class_='perk-page__item perk-page__item--keystone perk-page__item--active')
-        for x in keystoneWrapper:
-            rune = x.find('img', alt=True)
-            tree.append(rune.get('alt'))
-        otherRuneWrapper = i.find_all('div', class_='perk-page__item perk-page__item--active')
-        for x in otherRuneWrapper:
-            lowerRune = x.find('img', alt=True)
-            tree.append(lowerRune.get('alt'))
-        fullTrees += 'RUNE PAGE ' + str(count) + '\t' + statArray[count - 1] + '\n' + str(tree) + '\n\n'
-        tree.clear()
-        count += 1
-    
-    await channel.send('```' + fullTrees + '```')
+    await channel.send(league.runes(champ, lane))
 
 @client.command()
-async def get_counters(ctx, champion):
+async def counters(ctx, champion):
     await ctx.channel.send("```" + counters.best_pick(champion) + "```") 
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
@@ -306,7 +210,7 @@ async def help(ctx):
                            'runes - usage: `?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
                             'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
                            'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           'get_counters - usage: `?get_counters <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
+                           'counters - usage: `?counters <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
                            '**DEFINITIONS** \n' \
                            'rand_usr - usage: `?rand_usr <user>` - it will change their nickname to a random word \n' \
                            'get_def - usage: `?get_def <word>` - it will return a definition from wordnik.com \n' \
@@ -321,9 +225,9 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
-@tasks.loop(hours=5)
+@tasks.loop(hours=6)
 async def scheduled():
-    message_channel = client.get_channel(412851300255006730)
+    message_channel = client.get_channel(hq_channel)
     print(f"Got channel {message_channel}")
     await message_channel.send("POSTURE CHECK")
 
