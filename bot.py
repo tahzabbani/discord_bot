@@ -111,7 +111,7 @@ async def runes(ctx, champ, lane):
     await channel.send(league.runes(champ, lane))
 
 @client.command()
-async def counters(ctx, champion):
+async def counter(ctx, champion):
     await ctx.channel.send("```" + counters.best_pick(champion) + "```") 
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
