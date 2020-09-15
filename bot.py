@@ -115,6 +115,15 @@ async def counter(ctx, champion):
     await ctx.channel.send("```" + counters.best_pick(champion) + "```") 
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
+
+@client.command()
+async def overview(ctx, champ, lane):
+    if league.getCorrectLane(lane) != False:
+        lane = league.getCorrectLane(lane)
+    else: 
+        await ctx.channel.send("try again but don't type it weirdly")
+    await ctx.channel.send("```" + luke_methods.get_skills(champ, lane) + "```" + "\n" + "```" + luke_methods.get_skills(champ, lane) + "```" + "\n" + league.runes(champ, lane))
+
     
 # non league commands below
 
