@@ -2,19 +2,19 @@ import discord, asyncio
 import requests
 import math
 import random
-import os
 import dict_scrape
 import urban_dic
 import luke_methods
 import counters
 import league
+import config
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands, tasks
 from discord import User
 from asyncio import sleep
 from urllib import request, response, error, parse
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
@@ -212,20 +212,33 @@ async def urb_usr(ctx, member: discord.Member):
     await ctx.channel.send(definition)
 
 @client.command()
+async def rand_num(ctx, min, max):
+    if min.isnumeric() and max.isnumeric():
+        min = int(min)
+        max = int(max)
+        if min > max:
+            min, max = max, min
+        result = randint(min, max)
+        await ctx.channel.send(str(result))
+    else:
+        await ctx.channel.send("please enter numbers")
+
+@client.command()
 async def help(ctx):
     await ctx.channel.send('**LEAGUE RELATED** \n' \
                            'getinfo - usage: `?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
                            'tier - usage: `?tier <lane>` - retrieves tier list for that lane \n' \
                            'runes - usage: `?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
-                            'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
+                           'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
                            'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           'counters - usage: `?counters <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
+                           'counter - usage: `?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
                            '**DEFINITIONS** \n' \
                            'rand_usr - usage: `?rand_usr <user>` - it will change their nickname to a random word \n' \
                            'get_def - usage: `?get_def <word>` - it will return a definition from wordnik.com \n' \
                            'rand_urban_def - usage: `?rand_urban_def` - grab a random definition from urban dictionary \n' \
                            'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n\n' \
                            '**MISC** \n' \
+                           'rand_num - usage: `?rand_num <min> <max>` - picks a random number between two arguments \n' \
                            'spam - usage: `?spam <user>` - spams a user in the discord \n' \
                            'flip - usage: `?flip` - flips a coin \n' \
                            'ball - usage: `?ball <question>` - asks the 8ball')
@@ -247,4 +260,4 @@ async def before():
 
 scheduled.start()
 
-client.run(os.environ.get('MY_TOKEN'))
+client.run(config.MY_TOKEN)

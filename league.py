@@ -1,7 +1,7 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib import request, response, error, parse
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from prettytable import PrettyTable
 
 def getCorrectLane(lane):
@@ -17,6 +17,69 @@ def getCorrectLane(lane):
         return 'JUNGLE'
     else:
         return False
+
+# from league of graphs - lots of good information
+# however, for some reason it is pulling from ranked tab instead of the normal and ranked tab
+# def playedChamps(summoner_name):
+#     URL = "https://www.leagueofgraphs.com/summoner/champions/na/" + summoner_name + "/all#championsData-all-queues"
+#     hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
+#     req = Request(URL,headers=hdr)
+#     html = request.urlopen(req)
+#     soup = BeautifulSoup(html, 'html.parser')
+
+#     champ_name_array = []
+#     KDA_array = []
+#     kill_array = []
+#     death_array = []
+#     assist_array = []
+#     game_num_array = []
+#     winrate_array = []
+
+#     combined_array = []
+
+#     # the 6th occurence of the content class
+#     table = soup.find_all('div', class_='content')[6]
+#     pretty_table = PrettyTable(['Champion', 'Played', 'Winrate', 'KDA'])
+
+#     kills = table.find_all('span', class_='kills')
+#     deaths = table.find_all('span', class_='deaths')
+#     assists = table.find_all('span', class_='assists')
+#     names = table.find_all('span', class_='name')
+#     games_winrate = soup.select('div', class_='progressBarTxt')
+
+#     for x in kills:
+#         kill_text = x.get_text()
+#         kill_array.append(kill_text)
+#     for x in deaths:
+#         death_text = x.get_text()
+#         death_array.append(death_text)
+#     for x in assists:
+#         assist_text = x.get_text()
+#         assist_array.append(assist_text)
+
+#     for i in range(len(kill_array)):
+#         KDA_array.append(kill_array[i] + "/" + death_array[i] + "/" + assist_array[i])
+
+#     for i, x in enumerate(games_winrate):
+#         if (i % 2 == 0):
+#             game_text = x.find('div', class_='progressBarTxt').get_text()
+#             game_num_array.append(game_text)
+#         else:
+#             winrate_text = x.get_text()
+#             winrate_array.append(winrate_text)
+
+        
+#     for x in names:
+#         name_wrapper = x.get_text().replace("\t", "").replace("\n", "").replace(" ", "")
+#         champ_name_array.append(name_wrapper)
+
+#     print(games_winrate)
+#     print(KDA_array)
+#     print(champ_name_array)
+
+# playedChamps('10+piece+nugget')
+        
+
 
 def getinfo(summoner_name):
     URL = "https://na.op.gg/summoner/userName=" + summoner_name
