@@ -118,7 +118,7 @@ async def counter(ctx, champion):
 
 @client.command()
 async def overview(ctx, champ, lane):
-    await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "\n" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
+    await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
 
 # non league commands below
 
