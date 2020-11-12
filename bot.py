@@ -25,7 +25,7 @@ hq_channel = 412851300255006730
 
 @client.command()
 async def build(ctx, champion, lane):
-    if league.getCorrectLane(lane) != False:
+    if league.getCorrectLane(lane) != 'Wrong':
         lane = league.getCorrectLane(lane)
     else: 
         await ctx.channel.send("try again but don't type it weirdly")
@@ -33,7 +33,7 @@ async def build(ctx, champion, lane):
 
 @client.command()
 async def skills(ctx, champion, lane):
-    if league.getCorrectLane(lane) != False:
+    if league.getCorrectLane(lane) != 'Wrong':
         lane = league.getCorrectLane(lane)
     else: 
         await ctx.channel.send("try again but don't type it weirdly")
@@ -52,7 +52,7 @@ async def tier(ctx, lane):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'html.parser')
 
-    if league.getCorrectLane(lane) != False:
+    if league.getCorrectLane(lane) != 'Wrong':
         lane = league.getCorrectLane(lane)
     else: 
         await channel.send("try again but don't type it weirdly")
@@ -118,13 +118,8 @@ async def counter(ctx, champion):
 
 @client.command()
 async def overview(ctx, champ, lane):
-    if league.getCorrectLane(lane) != False:
-        lane = league.getCorrectLane(lane)
-    else: 
-        await ctx.channel.send("try again but don't type it weirdly")
-    await ctx.channel.send("```" + luke_methods.get_skills(champ, lane) + "```" + "\n" + "```" + luke_methods.get_skills(champ, lane) + "```" + "\n" + league.runes(champ, lane))
+    await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "\n" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
 
-    
 # non league commands below
 
 @client.command()
@@ -226,22 +221,23 @@ async def rand_num(ctx, min, max):
 @client.command()
 async def help(ctx):
     await ctx.channel.send('**LEAGUE RELATED** \n' \
-                           'getinfo - usage: `?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
-                           'tier - usage: `?tier <lane>` - retrieves tier list for that lane \n' \
-                           'runes - usage: `?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
-                           'build - usage: `?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
-                           'skills - usage: `?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           'counter - usage: `?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
+                           '`?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
+                           '`?tier <lane>` - retrieves tier list for that lane \n' \
+                           '`?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
+                           '`?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
+                           '`?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
+                           '`?overview <champion> <lane>` - retrieves the runes, build, and skill order \n' \
+                           '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
                            '**DEFINITIONS** \n' \
-                           'rand_usr - usage: `?rand_usr <user>` - it will change their nickname to a random word \n' \
-                           'get_def - usage: `?get_def <word>` - it will return a definition from wordnik.com \n' \
-                           'rand_urban_def - usage: `?rand_urban_def` - grab a random definition from urban dictionary \n' \
-                           'urb_usr - usage: `?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n\n' \
+                           '`?rand_usr <user>` - it will change their nickname to a random word \n' \
+                           '`?get_def <word>` - it will return a definition from wordnik.com \n' \
+                           '`?rand_urban_def` - grab a random definition from urban dictionary \n' \
+                           '`?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n\n' \
                            '**MISC** \n' \
-                           'rand_num - usage: `?rand_num <min> <max>` - picks a random number between two arguments \n' \
-                           'spam - usage: `?spam <user>` - spams a user in the discord \n' \
-                           'flip - usage: `?flip` - flips a coin \n' \
-                           'ball - usage: `?ball <question>` - asks the 8ball')
+                           '`?rand_num <min> <max>` - picks a random number between two arguments \n' \
+                           '`?spam <user>` - spams a user in the discord \n' \
+                           '`?flip` - flips a coin \n' \
+                           '`?ball <question>` - asks the 8ball')
 
 @client.event
 async def on_ready():

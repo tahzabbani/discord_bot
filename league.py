@@ -16,7 +16,7 @@ def getCorrectLane(lane):
     elif lane == 'jg' or lane == 'jungle':
         return 'JUNGLE'
     else:
-        return False
+        return 'Wrong'
 
 # from league of graphs - lots of good information
 # however, for some reason it is pulling from ranked tab instead of the normal and ranked tab
@@ -129,7 +129,7 @@ def runes(champ, lane):
     html = urlopen(URL)
     soup = BeautifulSoup(html, 'html.parser')
 
-    if getCorrectLane(lane) != False:
+    if getCorrectLane(lane) != 'Wrong':
         lane = getCorrectLane(lane)
     else: 
         return "try again but don't type it weirdly"
