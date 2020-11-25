@@ -8,6 +8,7 @@ import luke_methods
 import counters
 import league
 import config
+import twitter
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands, tasks
@@ -119,6 +120,12 @@ async def counter(ctx, champion):
 @client.command()
 async def overview(ctx, champ, lane):
     await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
+
+# twitter
+
+@client.command()
+async def trump(ctx):
+    await ctx.channel.send(twitter.trump())
 
 # non league commands below
 
