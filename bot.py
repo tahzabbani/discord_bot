@@ -249,6 +249,7 @@ async def help(ctx):
                            '`?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
                            '`?overview <champion> <lane>` - retrieves the runes, build, and skill order \n' \
                            '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
+                           '`?champs <summoner_name> - returns a table of that summoner\'s champions summary \n' \
                            '**DEFINITIONS** \n' \
                            '`?rand_usr <user>` - it will change their nickname to a random word \n' \
                            '`?get_def <word>` - it will return a definition from wordnik.com \n' \
