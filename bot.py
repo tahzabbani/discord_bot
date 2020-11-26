@@ -9,6 +9,7 @@ import counters
 import league
 import config
 import twitter
+import imgur
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands, tasks
@@ -127,7 +128,13 @@ async def overview(ctx, champ, lane):
 async def trump(ctx):
     await ctx.channel.send(twitter.trump())
 
-# non league commands below
+# imgur
+
+@client.command()
+async def imgur_search(ctx, query):
+    await ctx.channel.send(imgur.imgur_search(query))
+
+# non application commands below
 
 @client.command()
 async def flip(ctx):
@@ -243,7 +250,7 @@ async def help(ctx):
                            '**MISC** \n' \
                            '`?rand_num <min> <max>` - picks a random number between two arguments \n' \
                            '`?spam <user>` - spams a user in the discord \n' \
-                           '`?flip` - flips a coin \n' \
+                           '`?imgur_search - searches a query on imgur.com \n' \ 
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
