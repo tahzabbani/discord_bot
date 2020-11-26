@@ -122,6 +122,13 @@ async def counter(ctx, champion):
 async def overview(ctx, champ, lane):
     await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
 
+@client.command()
+async def champs(ctx, summoner_name):
+    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(end=30) + "```")
+    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=30, end=60) + "```")
+    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=60, end=90) + "```")
+
+
 # twitter
 
 @client.command()

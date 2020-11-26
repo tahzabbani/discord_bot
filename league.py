@@ -4,6 +4,7 @@ from urllib import request, response, error, parse
 from urllib.request import urlopen, Request
 from prettytable import PrettyTable
 
+
 def getCorrectLane(lane):
     if lane == 'mid' or lane == 'middle':
         return 'MID'
@@ -20,66 +21,73 @@ def getCorrectLane(lane):
 
 # from league of graphs - lots of good information
 # however, for some reason it is pulling from ranked tab instead of the normal and ranked tab
-# def playedChamps(summoner_name):
-#     URL = "https://www.leagueofgraphs.com/summoner/champions/na/" + summoner_name + "/all#championsData-all-queues"
-#     hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
-#     req = Request(URL,headers=hdr)
-#     html = request.urlopen(req)
-#     soup = BeautifulSoup(html, 'html.parser')
+def playedChamps(summoner_name):
+    URL = "https://www.leagueofgraphs.com/summoner/champions/na/" + summoner_name + "/all#championsData-all-queues"
+    hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
+    req = Request(URL,headers=hdr)
+    html = request.urlopen(req)
+    soup = BeautifulSoup(html, 'html.parser')
 
-#     champ_name_array = []
-#     KDA_array = []
-#     kill_array = []
-#     death_array = []
-#     assist_array = []
-#     game_num_array = []
-#     winrate_array = []
+    champ_name_array = []
+    KDA_array = []
+    kill_array = []
+    death_array = []
+    assist_array = []
+    game_num_array = []
+    winrate_array = []
 
-#     combined_array = []
+    # the 6th occurence of the content class
+    table = soup.find_all('div', class_='content')[6]
+    kills = table.find_all('span', class_='kills')
+    deaths = table.find_all('span', class_='deaths')
+    assists = table.find_all('span', class_='assists')
+    names = table.find_all('span', class_='name')
+    games_winrate = table.find_all('a', class_='full-cell', href=True)
 
-#     # the 6th occurence of the content class
-#     table = soup.find_all('div', class_='content')[6]
-#     pretty_table = PrettyTable(['Champion', 'Played', 'Winrate', 'KDA'])
+    for x in kills:
+        kill_text = x.get_text()
+        kill_array.append(kill_text)
+    for x in deaths:
+        death_text = x.get_text()
+        death_array.append(death_text)
+    for x in assists:
+        assist_text = x.get_text()
+        assist_array.append(assist_text)
 
-#     kills = table.find_all('span', class_='kills')
-#     deaths = table.find_all('span', class_='deaths')
-#     assists = table.find_all('span', class_='assists')
-#     names = table.find_all('span', class_='name')
-#     games_winrate = soup.select('div', class_='progressBarTxt')
+    for i in range(len(kill_array)):
+        KDA_array.append(kill_array[i] + "/" + death_array[i] + "/" + assist_array[i])
 
-#     for x in kills:
-#         kill_text = x.get_text()
-#         kill_array.append(kill_text)
-#     for x in deaths:
-#         death_text = x.get_text()
-#         death_array.append(death_text)
-#     for x in assists:
-#         assist_text = x.get_text()
-#         assist_array.append(assist_text)
+    # this is a pain in THE ASS just to get winrates/games
+    for i, x in enumerate(games_winrate):
+        if (i % 2 == 0):
+            progress_bar = x.find_all('progressbar')
+            game_value = ''.join(map(str, progress_bar)) 
+            find_index = game_value.find('data-value=')
+            if (find_index != -1):
+                new_string = game_value[find_index:find_index + 20]
+                split_string = new_string.split('"')
+                data = split_string[1]
+                game_num_array.append(data)
+        else:
+            progress_bar = x.find_all('progressbar')
+            game_value = ''.join(map(str, progress_bar)) 
+            find_index = game_value.find('data-value=')
+            if (find_index != -1):
+                new_string = game_value[find_index:find_index + 20]
+                split_string = new_string.split('"')
+                data = "{:.2%}".format(float(split_string[1]))
+                winrate_array.append(data)
 
-#     for i in range(len(kill_array)):
-#         KDA_array.append(kill_array[i] + "/" + death_array[i] + "/" + assist_array[i])
+    for x in names:
+        name_wrapper = x.get_text().strip()
+        champ_name_array.append(name_wrapper)
 
-#     for i, x in enumerate(games_winrate):
-#         if (i % 2 == 0):
-#             game_text = x.find('div', class_='progressBarTxt').get_text()
-#             game_num_array.append(game_text)
-#         else:
-#             winrate_text = x.get_text()
-#             winrate_array.append(winrate_text)
+    pretty_table = PrettyTable(['Champion', 'Games', 'Winrate', 'KDA'])
 
-        
-#     for x in names:
-#         name_wrapper = x.get_text().replace("\t", "").replace("\n", "").replace(" ", "")
-#         champ_name_array.append(name_wrapper)
+    for i in range(len(names)):
+        pretty_table.add_row([champ_name_array[i], game_num_array[i], str(winrate_array[i]), KDA_array[i]])
 
-#     print(games_winrate)
-#     print(KDA_array)
-#     print(champ_name_array)
-
-# playedChamps('10+piece+nugget')
-        
-
+    return pretty_table        
 
 def getinfo(summoner_name):
     URL = "https://na.op.gg/summoner/userName=" + summoner_name
@@ -90,7 +98,6 @@ def getinfo(summoner_name):
     namesArray = []
     gameTypeArray = []
     gameResultArray = []
-    finishedArray = []
 
     div = soup.find_all('div', class_='GameItemList')
     rank = soup.find('div', class_='TierRank').get_text()
