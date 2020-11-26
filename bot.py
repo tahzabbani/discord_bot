@@ -250,7 +250,7 @@ async def help(ctx):
                            '**MISC** \n' \
                            '`?rand_num <min> <max>` - picks a random number between two arguments \n' \
                            '`?spam <user>` - spams a user in the discord \n' \
-                           '`?imgur_search` - searches a query on imgur.com \n' \ 
+                           '`?imgur_search <query>` - searches a query on imgur.com \n'
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
