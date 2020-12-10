@@ -240,6 +240,17 @@ async def rand_num(ctx, min, max):
         await ctx.channel.send("please enter numbers")
 
 @client.command()
+async def delete_msg(ctx, num_of_messages):
+    count = 0
+    messages = await ctx.channel.history(limit=200).flatten()
+    for msg in messages:
+        if msg.author == ctx.message.author:
+            await msg.delete()
+            count += 1
+        if count == int(num_of_messages):
+            break
+
+@client.command()
 async def help(ctx):
     await ctx.channel.send('**LEAGUE RELATED** \n' \
                            '`?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
@@ -265,17 +276,17 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
-@tasks.loop(hours=6)
-async def scheduled():
-    message_channel = client.get_channel(hq_channel)
-    print(f"Got channel {message_channel}")
-    await message_channel.send("POSTURE CHECK")
+# @tasks.loop(hours=6)
+# async def scheduled():
+#     message_channel = client.get_channel(hq_channel)
+#     print(f"Got channel {message_channel}")
+#     await message_channel.send("POSTURE CHECK")
 
-@scheduled.before_loop
-async def before():
-    await client.wait_until_ready()
-    print("Finished waiting")
+# @scheduled.before_loop
+# async def before():
+#     await client.wait_until_ready()
+#     print("Finished waiting")
 
-scheduled.start()
+# scheduled.start()
 
 client.run(config.MY_TOKEN)

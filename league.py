@@ -20,7 +20,6 @@ def getCorrectLane(lane):
         return 'Wrong'
 
 # from league of graphs - lots of good information
-# however, for some reason it is pulling from ranked tab instead of the normal and ranked tab
 def playedChamps(summoner_name):
     URL = "https://www.leagueofgraphs.com/summoner/champions/na/" + summoner_name + "/all#championsData-all-queues"
     hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
