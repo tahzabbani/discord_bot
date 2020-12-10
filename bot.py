@@ -276,17 +276,17 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
-# @tasks.loop(hours=6)
-# async def scheduled():
-#     message_channel = client.get_channel(hq_channel)
-#     print(f"Got channel {message_channel}")
-#     await message_channel.send("POSTURE CHECK")
+@tasks.loop(hours=6)
+async def scheduled():
+    message_channel = client.get_channel(hq_channel)
+    print(f"Got channel {message_channel}")
+    await message_channel.send("POSTURE CHECK")
 
-# @scheduled.before_loop
-# async def before():
-#     await client.wait_until_ready()
-#     print("Finished waiting")
+@scheduled.before_loop
+async def before():
+    await client.wait_until_ready()
+    print("Finished waiting")
 
-# scheduled.start()
+scheduled.start()
 
 client.run(config.MY_TOKEN)
