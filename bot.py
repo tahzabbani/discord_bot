@@ -291,12 +291,11 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-    print("ran")
     if message.author.id == dad_bot_ID:
         bot_message = await message.channel.send("shut up dad")
         await message.delete(delay=2)
         await bot_message.delete(delay=2)
-
+    await client.process_commands(message)
 
 @tasks.loop(hours=6)
 async def scheduled():
