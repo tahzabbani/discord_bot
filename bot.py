@@ -24,6 +24,7 @@ client = commands.Bot(command_prefix='?')
 client.remove_command("help")                   
 
 hq_channel = 412851300255006730
+dad_bot_ID = 503720029456695306
 
 @client.command()
 async def build(ctx, champion, lane):
@@ -240,14 +241,24 @@ async def rand_num(ctx, min, max):
         await ctx.channel.send("please enter numbers")
 
 @client.command()
-async def delete_msg(ctx, num_of_messages):
+async def me_delete(ctx, num_of_messages):
     count = 0
     messages = await ctx.channel.history(limit=200).flatten()
     for msg in messages:
         if msg.author == ctx.message.author:
             await msg.delete()
             count += 1
-        if count == int(num_of_messages):
+        if count == int(num_of_messages) + 1:
+            break
+
+@client.command()
+async def mass_delete(ctx, num_of_messages):
+    count = 0
+    messages = await ctx.channel.history(limit=200).flatten()
+    for msg in messages:
+        await msg.delete()
+        count += 1
+        if count == int(num_of_messages) + 1:
             break
 
 @client.command()
@@ -259,22 +270,33 @@ async def help(ctx):
                            '`?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
                            '`?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
                            '`?overview <champion> <lane>` - retrieves the runes, build, and skill order \n' \
-                           '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n\n' \
-                           '`?champs <summoner_name> - returns a table of that summoner\'s champions summary \n' \
+                           '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n' \
+                           '`?champs <summoner_name>` - returns a table of that summoner\'s champions summary \n\n' \
                            '**DEFINITIONS** \n' \
                            '`?rand_usr <user>` - it will change their nickname to a random word \n' \
                            '`?get_def <word>` - it will return a definition from wordnik.com \n' \
                            '`?rand_urban_def` - grab a random definition from urban dictionary \n' \
                            '`?urb_usr <user>` - change a nickname to a random urban dictionary word and then will display the definition \n\n' \
                            '**MISC** \n' \
+                           '`?mass_delete <number>` - deletes all messages up to your number \n' 
+                           '`?me_delete <number>` - deletes your past messages to a certain number of them \n' \
                            '`?rand_num <min> <max>` - picks a random number between two arguments \n' \
                            '`?spam <user>` - spams a user in the discord \n' \
-                           '`?imgur_search <query>` - searches a query on imgur.com \n'
+                           '`?imgur_search <query>` - searches a query on imgur.com \n' \
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
 async def on_ready():
     print('bot is online')
+
+@client.event
+async def on_message(message):
+    print("ran")
+    if message.author.id == dad_bot_ID:
+        bot_message = await message.channel.send("shut up dad")
+        await message.delete(delay=2)
+        await bot_message.delete(delay=2)
+
 
 @tasks.loop(hours=6)
 async def scheduled():
