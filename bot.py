@@ -26,6 +26,12 @@ client.remove_command("help")
 hq_channel = 412851300255006730
 dad_bot_ID = 503720029456695306
 
+def summoner_name_fix(summoner_name):
+    summoner_name = summoner_name.replace("_", "%20")
+    return summoner_name
+            
+print(summoner_name_fix("10_piece_nugget"))
+
 @client.command()
 async def build(ctx, champion, lane):
     if league.getCorrectLane(lane) != 'Wrong':
@@ -125,6 +131,7 @@ async def overview(ctx, champ, lane):
 
 @client.command()
 async def champs(ctx, summoner_name):
+    summoner_name = summoner_name_fix(summoner_name)
     await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(end=30) + "```")
     await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=30, end=60) + "```")
     await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=60, end=90) + "```")
@@ -132,9 +139,9 @@ async def champs(ctx, summoner_name):
 
 # twitter
 
-@client.command()
-async def trump(ctx):
-    await ctx.channel.send(twitter.trump())
+# @client.command()
+# async def trump(ctx):
+#     await ctx.channel.send(twitter.trump())
 
 # imgur
 
@@ -289,6 +296,7 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
+# specifically made to combat dad bot
 @client.event
 async def on_message(message):
     if message.author.id == dad_bot_ID:
