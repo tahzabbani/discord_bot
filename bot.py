@@ -8,7 +8,6 @@ import luke_methods
 import counters
 import league
 import config
-import twitter
 import imgur
 from bs4 import BeautifulSoup
 from random import randint
@@ -125,8 +124,9 @@ async def counter(ctx, champion):
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
 
+# gives overview of whatever champ it is
 @client.command()
-async def overview(ctx, champ, lane):
+async def o(ctx, champ, lane):
     await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
 
 @client.command()
@@ -136,12 +136,6 @@ async def champs(ctx, summoner_name):
     await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=30, end=60) + "```")
     await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=60, end=90) + "```")
 
-
-# twitter
-
-# @client.command()
-# async def trump(ctx):
-#     await ctx.channel.send(twitter.trump())
 
 # imgur
 
@@ -276,7 +270,7 @@ async def help(ctx):
                            '`?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
                            '`?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
                            '`?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           '`?overview <champion> <lane>` - retrieves the runes, build, and skill order \n' \
+                           '`?o <champion> <lane>` - retrieves the runes, build, and skill order \n' \
                            '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n' \
                            '`?champs <summoner_name>` - returns a table of that summoner\'s champions summary \n\n' \
                            '**DEFINITIONS** \n' \
