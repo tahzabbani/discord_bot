@@ -9,6 +9,9 @@ import counters
 import league
 import config
 import imgur
+import stats
+import os
+from datetime import datetime
 from bs4 import BeautifulSoup
 from random import randint
 from discord.ext import commands, tasks
@@ -19,6 +22,7 @@ from urllib.request import urlopen, Request
 from prettytable import PrettyTable
 
 client = commands.Bot(command_prefix='?')
+
 # for the initial help command it provides
 client.remove_command("help")                   
 
@@ -28,8 +32,8 @@ dad_bot_ID = 503720029456695306
 def summoner_name_fix(summoner_name):
     summoner_name = summoner_name.replace("_", "%20")
     return summoner_name
-            
-print(summoner_name_fix("10_piece_nugget"))
+
+
 
 @client.command()
 async def build(ctx, champion, lane):
@@ -194,6 +198,7 @@ async def ball(ctx, question):
         random_response_index = randint(0, len(responses) - 1)
         await ctx.channel.send(responses[random_response_index])
 
+# dictionary username changes
 
 @client.command()
 async def rand_usr(ctx, member: discord.Member):
@@ -228,6 +233,8 @@ async def urb_usr(ctx, member: discord.Member):
     await member.edit(nick=username)
     await ctx.channel.send('Nickname was changed to ' + username)
     await ctx.channel.send(definition)
+
+# end dict methods
 
 @client.command()
 async def rand_num(ctx, min, max):
@@ -290,6 +297,30 @@ async def help(ctx):
 async def on_ready():
     print('bot is online')
 
+@client.command()
+async def voice_graph(ctx):
+    stats.generate_graph()
+    await ctx.channel.send(file=discord.File('./images/mygraph.png'))
+    os.remove("./images/mygraph.png")
+
+@client.event
+async def on_voice_state_update(member, before, after):
+    message_channel = client.get_channel(hq_channel)
+    # user leaves
+    if (after.channel != before.channel and after.channel == None and before.channel != None): 
+        now  = datetime.now()
+        stats.update_timestamp(member.name, now)
+        await message_channel.send(str(stats.update_time_diff(member.name, now)) + " seconds")
+    # user joins
+    if (after.channel != before.channel and after.channel != None and before.channel == None): 
+        now  = datetime.now()
+        stats.update_timestamp(member.name, now)
+    # switching from one channel to another
+    # if (after.channel != before.channel and after.channel != None and before.channel != None): 
+    #     now  = datetime.now()
+    #     stats.update_time_diff(member.id, now)
+    #     stats.update_timestamp(member.id, now)
+
 # specifically made to combat dad bot
 @client.event
 async def on_message(message):
@@ -299,6 +330,7 @@ async def on_message(message):
         await bot_message.delete(delay=2)
     await client.process_commands(message)
 
+# for routine posture checks
 @tasks.loop(hours=6)
 async def scheduled():
     message_channel = client.get_channel(hq_channel)
