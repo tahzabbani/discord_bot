@@ -303,23 +303,23 @@ async def voice_graph(ctx):
     await ctx.channel.send(file=discord.File('./images/mygraph.png'))
     os.remove("./images/mygraph.png")
 
-@client.event
-async def on_voice_state_update(member, before, after):
-    message_channel = client.get_channel(hq_channel)
-    # user leaves
-    if (after.channel != before.channel and after.channel == None and before.channel != None): 
-        now  = datetime.now()
-        stats.update_timestamp(member.name, now)
-        await message_channel.send(str(stats.update_time_diff(member.name, now)) + " seconds")
-    # user joins
-    if (after.channel != before.channel and after.channel != None and before.channel == None): 
-        now  = datetime.now()
-        stats.update_timestamp(member.name, now)
-    # switching from one channel to another
-    # if (after.channel != before.channel and after.channel != None and before.channel != None): 
-    #     now  = datetime.now()
-    #     stats.update_time_diff(member.id, now)
-    #     stats.update_timestamp(member.id, now)
+# @client.event
+# async def on_voice_state_update(member, before, after):
+#     message_channel = client.get_channel(hq_channel)
+#     # user leaves
+#     if (after.channel != before.channel and after.channel == None and before.channel != None): 
+#         now  = datetime.now()
+#         stats.update_timestamp(member.name, now)
+#         await message_channel.send(str(stats.update_time_diff(member.name, now)) + " seconds")
+#     # user joins
+#     if (after.channel != before.channel and after.channel != None and before.channel == None): 
+#         now  = datetime.now()
+#         stats.update_timestamp(member.name, now)
+#     # switching from one channel to another
+#     # if (after.channel != before.channel and after.channel != None and before.channel != None): 
+#     #     now  = datetime.now()
+#     #     stats.update_time_diff(member.id, now)
+#     #     stats.update_timestamp(member.id, now)
 
 # specifically made to combat dad bot
 @client.event

@@ -1,13 +1,15 @@
 import requests
 from bs4 import BeautifulSoup
 from urllib import request, response, error, parse
-from urllib.request import urlopen
+from urllib.request import urlopen, Request
 from prettytable import PrettyTable
 
 
 def best_pick(champion):
     URL = "https://u.gg/lol/champions/" + champion + "/counter?rank=overall"
-    html = urlopen(URL)
+    hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
+    req = Request(URL,headers=hdr)
+    html = request.urlopen(req)
     soup = BeautifulSoup(html, 'html.parser')
 
     best_names = []
@@ -30,7 +32,9 @@ def best_pick(champion):
 
 def worst_picks(champion):
     URL = "https://u.gg/lol/champions/" + champion + "/counter?rank=overall"
-    html = urlopen(URL)
+    hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
+    req = Request(URL,headers=hdr)
+    html = request.urlopen(req)
     soup = BeautifulSoup(html, 'html.parser')
 
     worst_names =[]
@@ -53,7 +57,9 @@ def worst_picks(champion):
 
 def best_lane_picks(champion):
     URL = "https://u.gg/lol/champions/" + champion + "/counter?rank=overall"
-    html = urlopen(URL)
+    hdr = {'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_6) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.77 Safari/537.36'}
+    req = Request(URL,headers=hdr)
+    html = request.urlopen(req)
     soup = BeautifulSoup(html, 'html.parser')
 
     best_lane_names =[]
