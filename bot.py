@@ -1,4 +1,5 @@
 import discord, asyncio
+from discord.ext import commands
 import requests
 import math
 import random
@@ -11,6 +12,7 @@ import config
 import imgur
 import stats
 import os
+import strikes
 from datetime import datetime
 from bs4 import BeautifulSoup
 from random import randint
@@ -271,7 +273,7 @@ async def mass_delete(ctx, num_of_messages):
 
 @client.command()
 async def help(ctx):
-    await ctx.channel.send('**LEAGUE RELATED** \n' \
+    await ctx.channel.send('**LEAGUE RELATED (mainly deprecated im sorry)** \n' \
                            '`?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
                            '`?tier <lane>` - retrieves tier list for that lane \n' \
                            '`?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
@@ -301,8 +303,22 @@ async def on_ready():
 async def voice_graph(ctx):
     stats.generate_graph()
     await ctx.channel.send(file=discord.File('./images/mygraph.png'))
-    os.remove("./images/mygraph.png")
-
+    
+@client.command()
+async def strike(ctx, member: discord.Member):
+    strikes.add_strike(member.name)
+    strikes.show_strike_graph()
+    await ctx.channel.send(file=discord.File('./images/strikegraph.png'))
+    os.remove("./images/strikegraph.png")
+        
+@client.command()
+async def rm_strike(ctx, member: discord.Member):
+    strikes.remove_strike(member.name)
+    strikes.show_strike_graph()
+    await ctx.channel.send(file=discord.File('./images/strikegraph.png'))
+    os.remove("./images/strikegraph.png")
+        
+        
 # @client.event
 # async def on_voice_state_update(member, before, after):
 #     message_channel = client.get_channel(hq_channel)
@@ -329,6 +345,13 @@ async def on_message(message):
         await message.delete(delay=2)
         await bot_message.delete(delay=2)
     await client.process_commands(message)
+    
+@client.event
+async def on_command_error(ctx, error):
+    if isinstance(error, discord.ext.commands.errors.CommandNotFound):
+        await ctx.send("That command wasn't found! Sorry :(")
+    if isinstance(error, discord.ext.commands.errors.MemberNotFound):
+        await ctx.send("That member wasn't found! Sorry :(")
 
 # for routine posture checks
 @tasks.loop(hours=6)

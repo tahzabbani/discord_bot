@@ -6,7 +6,8 @@ Here is a list of the commands that basically describe what all this bot can do:
 
 <img src="./images/discord_bot.png">
 
-This bot mainly scrapes a lot of web information with BeautifulSoup to obtain information for League of Legends and also dictionary/urban dictionary words to replace usernames in a specific discord.
+This bot mainly scrapes a lot of web information with BeautifulSoup to obtain information for League of Legends and also dictionary/urban dictionary words to replace usernames in a specific discord. \
+A lot of things are broken right now and I'm busy. I'm sorry.
 
 ## Acknowledgements
 
