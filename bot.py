@@ -294,7 +294,7 @@ async def help(ctx):
                            '`?spam <user>` - spams a user in the discord \n' \
                            '`?imgur_search <query>` - searches a query on imgur.com \n' \
                            '`?strike <user>` - adds a strike to a discord user\n' \
-                           '`rm_strike <user>` - removes a strike from a discord user on the board\n' \
+                           '`?rm_strike <user>` - removes a strike from a discord user on the board\n' \
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
