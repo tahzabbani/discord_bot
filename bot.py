@@ -293,6 +293,8 @@ async def help(ctx):
                            '`?rand_num <min> <max>` - picks a random number between two arguments \n' \
                            '`?spam <user>` - spams a user in the discord \n' \
                            '`?imgur_search <query>` - searches a query on imgur.com \n' \
+                           '`?strike <user>` - adds a strike to a discord user' \
+                           '`rm_strike <user>` - removes a strike from a discord user on the board' \
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
