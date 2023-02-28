@@ -295,6 +295,7 @@ async def help(ctx):
                            '`?imgur_search <query>` - searches a query on imgur.com \n' \
                            '`?strike <user>` - adds a strike to a discord user\n' \
                            '`?rm_strike <user>` - removes a strike from a discord user on the board\n' \
+                           '`?view_strike` - views the current strikes in a bar graph' \
                            '`?ball <question>` - asks the 8ball')
 
 @client.event
@@ -319,7 +320,12 @@ async def rm_strike(ctx, member: discord.Member):
     strikes.show_strike_graph()
     await ctx.channel.send(file=discord.File('./images/strikegraph.png'))
     os.remove("./images/strikegraph.png")
-        
+
+@client.command()
+async def view_strike(ctx):
+    strikes.show_strike_graph()
+    await ctx.channel.send(file=discord.File('./images/strikegraph.png'))
+    os.remove("./images/strikegraph.png")   
         
 # @client.event
 # async def on_voice_state_update(member, before, after):
@@ -351,9 +357,9 @@ async def on_message(message):
 @client.event
 async def on_command_error(ctx, error):
     if isinstance(error, discord.ext.commands.errors.CommandNotFound):
-        await ctx.send("That command wasn't found! Sorry :(")
-    if isinstance(error, discord.ext.commands.errors.MemberNotFound):
-        await ctx.send("That member wasn't found! Sorry :(")
+        await ctx.channel.send("That command wasn't found! Sorry :(")
+    elif isinstance(error, discord.ext.commands.errors.MemberNotFound):
+        await ctx.channel.send("That member wasn't found! Sorry :(")
 
 # for routine posture checks
 @tasks.loop(hours=6)
