@@ -31,116 +31,11 @@ client.remove_command("help")
 hq_channel = 412851300255006730
 dad_bot_ID = 503720029456695306
 
-def summoner_name_fix(summoner_name):
-    summoner_name = summoner_name.replace("_", "%20")
-    return summoner_name
-
-
-
-@client.command()
-async def build(ctx, champion, lane):
-    if league.getCorrectLane(lane) != 'Wrong':
-        lane = league.getCorrectLane(lane)
-    else: 
-        await ctx.channel.send("try again but don't type it weirdly")
-    await ctx.channel.send("```" + luke_methods.get_build(champion, lane) + "```")
-
-@client.command()
-async def skills(ctx, champion, lane):
-    if league.getCorrectLane(lane) != 'Wrong':
-        lane = league.getCorrectLane(lane)
-    else: 
-        await ctx.channel.send("try again but don't type it weirdly")
-    await ctx.channel.send("```" + luke_methods.get_skills(champion, lane) + "```")
-
-@client.command()
-async def getinfo(ctx, summoner_name):
-    channel = ctx.channel
-    await channel.send(league.getinfo(summoner_name))
-
-#  this command cannot be sent to the league.py because of how I set it up with discord's character limit because I am dumb
-@client.command()
-async def tier(ctx, lane):
-    channel = ctx.channel
-    URL = "https://na.op.gg/champion/statistics"
-    html = urlopen(URL)
-    soup = BeautifulSoup(html, 'html.parser')
-
-    if league.getCorrectLane(lane) != 'Wrong':
-        lane = league.getCorrectLane(lane)
-    else: 
-        await channel.send("try again but don't type it weirdly")
-    
-    champArray = []
-    pickRateArray = []
-    winRateArray = []
-    numArray = []
-
-    laneClass = 'tabItem champion-trend-tier-' + lane
-    wrapper = soup.find_all('tbody', class_=laneClass)
-    
-    for x in wrapper:
-        numWrapper = x.find_all('td', 'champion-index-table__cell champion-index-table__cell--rank')
-        for i in numWrapper:
-            champNum = i.get_text()
-            numArray.append(champNum)
-        champWrapper = x.find_all('td', class_="champion-index-table__cell champion-index-table__cell--champion")
-        for i in champWrapper:
-            champName = i.find('div', class_='champion-index-table__name').get_text()
-            champArray.append(champName)
-
-        winValueWrapper = x.find_all('td', 'champion-index-table__cell champion-index-table__cell--value')
-        for i, y in enumerate(winValueWrapper):
-            if i % 3 == 0:
-                winValue = y.get_text()
-                winRateArray.append(winValue)
-            elif i % 3 == 1:
-                pickRate = y.get_text()
-                pickRateArray.append(pickRate)
-            else:
-                continue
-
-    top = PrettyTable(['Number','Champion', 'Win Rate', 'Pick Rate'])
-    bottomHalf = PrettyTable(['Number','Champion', 'Win Rate', 'Pick Rate'])
-
-    roundDownLength = math.floor(len(champArray)/2)
-    count = 0                             
-    # this stuff has to happen because 2000 limit per message in discord                  
-    for i in range(roundDownLength):
-        top.add_row([numArray[i], champArray[i], winRateArray[i], pickRateArray[i]])
-        count+=1
-
-    # submit as code block because of spacing restrictions
-    await channel.send('```' + str(top) + '```')            
-
-    while count < len(champArray):
-        bottomHalf.add_row([numArray[count], champArray[count], winRateArray[count], pickRateArray[count]])
-        count += 1
-
-    await channel.send('```' + str(bottomHalf) + '```')
-
-@client.command()
-async def runes(ctx, champ, lane):
-    channel = ctx.channel
-    await channel.send(league.runes(champ, lane))
-
 @client.command()
 async def counter(ctx, champion):
     await ctx.channel.send("```" + counters.best_pick(champion) + "```") 
     await ctx.channel.send("```" + counters.worst_picks(champion) + "```") 
     await ctx.channel.send("```" + counters.best_lane_picks(champion) + "```")
-
-# gives overview of whatever champ it is
-@client.command()
-async def o(ctx, champ, lane):
-    await ctx.channel.send("```" + luke_methods.get_build(champ, lane) + "```" + "```" + luke_methods.get_skills(champ, lane) + "```" + league.runes(champ, lane))
-
-@client.command()
-async def champs(ctx, summoner_name):
-    summoner_name = summoner_name_fix(summoner_name)
-    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(end=30) + "```")
-    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=30, end=60) + "```")
-    await ctx.channel.send("```" + league.playedChamps(summoner_name).get_string(start=60, end=90) + "```")
 
 
 # imgur
@@ -274,14 +169,7 @@ async def mass_delete(ctx, num_of_messages):
 @client.command()
 async def help(ctx):
     await ctx.channel.send('**LEAGUE RELATED (mainly deprecated im sorry)** \n' \
-                           '`?getinfo <summoner_name>` - (make sure to use underscores) it retrieves some info on that summoner \n' \
-                           '`?tier <lane>` - retrieves tier list for that lane \n' \
-                           '`?runes <champion> <lane>` - retrieves rune for that role and champ \n' \
-                           '`?build <champion> <lane>` - retrieve the build for a champion (first three main items) \n' \
-                           '`?skills <champion> <lane>` - retrieve the skill max order for a champion \n' \
-                           '`?o <champion> <lane>` - retrieves the runes, build, and skill order \n' \
                            '`?counter <champion>` - get the best picks, worst picks, and best lane picks for a champion \n' \
-                           '`?champs <summoner_name>` - returns a table of that summoner\'s champions summary \n\n' \
                            '**DEFINITIONS** \n' \
                            '`?rand_usr <user>` - it will change their nickname to a random word \n' \
                            '`?get_def <word>` - it will return a definition from wordnik.com \n' \
@@ -301,11 +189,6 @@ async def help(ctx):
 @client.event
 async def on_ready():
     print('bot is online')
-
-@client.command()
-async def voice_graph(ctx):
-    stats.generate_graph()
-    await ctx.channel.send(file=discord.File('./images/mygraph.png'))
     
 @client.command()
 async def strike(ctx, member: discord.Member):
@@ -327,24 +210,6 @@ async def view_strike(ctx):
     await ctx.channel.send(file=discord.File('./images/strikegraph.png'))
     os.remove("./images/strikegraph.png")   
         
-# @client.event
-# async def on_voice_state_update(member, before, after):
-#     message_channel = client.get_channel(hq_channel)
-#     # user leaves
-#     if (after.channel != before.channel and after.channel == None and before.channel != None): 
-#         now  = datetime.now()
-#         stats.update_timestamp(member.name, now)
-#         await message_channel.send(str(stats.update_time_diff(member.name, now)) + " seconds")
-#     # user joins
-#     if (after.channel != before.channel and after.channel != None and before.channel == None): 
-#         now  = datetime.now()
-#         stats.update_timestamp(member.name, now)
-#     # switching from one channel to another
-#     # if (after.channel != before.channel and after.channel != None and before.channel != None): 
-#     #     now  = datetime.now()
-#     #     stats.update_time_diff(member.id, now)
-#     #     stats.update_timestamp(member.id, now)
-
 # specifically made to combat dad bot
 @client.event
 async def on_message(message):
