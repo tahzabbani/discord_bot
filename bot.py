@@ -7,7 +7,6 @@ import dict_scrape
 import urban_dic
 import luke_methods
 import counters
-import league
 import config
 import imgur
 import stats
